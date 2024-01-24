@@ -14,12 +14,22 @@ async function start (): Promise<Job> {
   console.log(`Start producer`)
 
   let message: Message = {
-    IssuerID: '1',
+    IssuerID: '3',
     FileBase64: 'FileInBase64',
     Status: 'Pending',
   }
 
-  return await sendQueue.add(env.bullQueueJobFile, message)
+  // https://github.com/OptimalBits/bull/blob/v4.12.2/REFERENCE.md#queueadd
+  const JobOpts = {
+    removeOnComplete: true, // Remove quando for concluída com sucesso
+    attempts: 100, // Quantidades de tentativas caso falha
+    // delay: 10000, // Tempo em milissegundos para o evento ser processado
+    backoff: { // Configurações para retentativas
+      type: 'fixed',
+      delay: 10000, // Tempo para realizar uma nova tentativa
+    }
+  }
+  return await sendQueue.add(env.bullQueueJobFile, message, JobOpts)
 }
 
 start().then((job) => {
