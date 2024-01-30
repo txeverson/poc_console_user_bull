@@ -1,1 +1,1 @@
-# POC usando o BULL com serviço de fila
+# POC usando o BULL JS
